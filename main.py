@@ -76,18 +76,30 @@ def minimax(state, depth, playerID):
     
 
 
-print("Welcome to AI tictactoe")
+print("Welcome to AI tic tac toe")
 currentState = [set(), set()]  #initalState = [x coordinates, y coordinates]
 printBoard(currentState)
 while(not gameOver(currentState)):
-    print("Your Turn: ")
+    print("Enter Move (x,y): ")
     [x,y] = input().split(" ")
+
+    while((int(x),int(y)) in set.union(currentState[0], currentState[1])):
+        print("Sorry Location has already been taken")
+        print("Enter Move: (x,y)")
+        [x,y] = input().split(" ")
+        
     currentState[0].add((int(x),int(y)))
     printBoard(currentState)
     print("AI's Turn")
-    print("AI thinking")
+    print("AI is thinking...")
     currentState = minimax(currentState, 9, 1)[1]
     printBoard(currentState)
+if(isWin(currentState, 0)):
+    print("Congratulations!, you win")
+elif(isWin(currentState, 1)):
+    print("AI wins, better luck next time")
+else:
+    print("Draw")
 
 
 
