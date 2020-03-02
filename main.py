@@ -83,11 +83,11 @@ while(not gameOver(currentState)):
     print("Enter Move (x,y): ")
     [x,y] = input().split(" ")
 
-    while((int(x),int(y)) in set.union(currentState[0], currentState[1])):
+    while((int(x),int(y)) in set.union(currentState[0], currentState[1]) ):
         print("Sorry Location has already been taken")
         print("Enter Move: (x,y)")
         [x,y] = input().split(" ")
-        
+    
     currentState[0].add((int(x),int(y)))
     printBoard(currentState)
     print("AI's Turn")
