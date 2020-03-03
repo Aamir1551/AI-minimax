@@ -1,3 +1,8 @@
+from __future__ import print_function
+import sys
+if sys.version_info[0] < 3:
+    print("Must use python 3 to run program")
+    sys.exit(0)
 def printBoard(state):
     for i in range(3):
         print("|", end="")
@@ -26,7 +31,7 @@ def isWin(state, playerID):
     return any(winVertical) or any(winHorizontal) or any(winDiagonal)
 
 def staticEvaluation(state):
-    return (1 if isWin(state, 0) else (-1 if isWin(state, 1)  else 0)), state
+    return (1 if isWin(state, 0) else (-1 if isWin(state, 1)  else 0))
 
 def gameOver(state):
     return isWin(state, 0) or isWin(state, 1) or ( len(state[0]) + len(state[1]) == 9)
@@ -49,7 +54,7 @@ def getChildState(state, playerID):
 def minimax(state, depth, playerID):
     #player 0  tries to maximise value, while player 1 tries to minimise it
     if(depth == 0 or gameOver(state)):
-        return staticEvaluation(state)
+        return staticEvaluation(state), state
     
     stateChildren = getChildState(state, playerID)
     v, childChosen = 0, []
