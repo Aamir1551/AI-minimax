@@ -189,7 +189,7 @@ def play_game(m, n):
 
         col = int(col) - 1
         temp_heights = []
-        for h_i in range(m):
+        for h_i in range(n):
             temp_heights.append(current_heights[h_i] - 1 if h_i == col else current_heights[h_i])
 
         location =  get_input_location(col, current_heights)
@@ -203,11 +203,11 @@ def play_game(m, n):
         print("AI is thinking...")
         print()
         print_grid(current_state)
-        solution = minimax(current_state, m*n, 1, states_visited)
+        solution = minimax(current_state, m+n, 1, states_visited)
         clear()
 
         current_state = solution[1]
-        print("AI thinks he can win: " + str(solution[0] == 1))
+        print("AI thinks he can win: " + str(solution[0] == 1) + ". AI is only looking " + str(m+n) + " moves ahead.")
         print()
         history.append(current_state)
         print_grid(current_state)
