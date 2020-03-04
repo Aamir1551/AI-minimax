@@ -203,7 +203,7 @@ def play_game(m, n):
         temp_heights = tuple(temp_heights)
 
         location =  get_input_location(col, current_heights)
-        player1_pos = frozenset.union(player1_pos, location)
+        player1_pos = frozenset.union(player1_pos, {location} )
         current_state = (player1_pos, player2_pos, (m,n,temp_heights), score)
         score = calculate_score(current_state, 0, location)
         current_state = (player1_pos, player2_pos, (m,n,temp_heights), score)
