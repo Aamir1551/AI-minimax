@@ -1,6 +1,7 @@
 from __future__ import print_function
 from os import system, name 
 from sys import version_info, exit
+global_test_variable = 0
 if version_info[0] < 3:
     print("Must use python 3 to run program")
     exit(0)
@@ -59,7 +60,7 @@ def calculate_score(state, playerID, new_piece):
             diagonal_count_r = 0
         t+=1
 
-    v  = any([horizotal_count == 4, vertical_count == 4, diagonal_count_l == 4, diagonal_count_r == 4])
+    v  = int(any([horizotal_count == 4, vertical_count == 4, diagonal_count_l == 4, diagonal_count_r == 4]))
     score = v if (playerID == 0) else -v
     return score
 
@@ -106,7 +107,7 @@ def get_child_state(state, playerID):
 
 def minimax(state, depth, playerID, states_visited):
     #player 0  tries to maximise value, while player 1 tries to minimise it
-    #states visited is a hashmap from states to their minimax values
+    #states visited is a      from states to their minimax values
 
     if(state in states_visited):
         return states_visited[state]
@@ -164,17 +165,15 @@ def menu():
             print("Move " + str(j)) 
             print_grid(g)
 
-def clear(): 
-  
-    # for windows 
+def clear():   
     if name == 'nt': 
-        _ = system('cls') 
-  
-    # for mac and linux(here, os.name is 'posix') 
+        _ = system('cls')   
     else: 
         _ = system('clear')
 
+current_state = ()
 def play_game(m, n):
+    global current_state
     history = []
     states_visited = {}
     current_state = (frozenset(), frozenset(), (m, n, (m-1,) * n), 0)  #initial_state = [{player1 pos}, {player 2 pos}, [m,n], score]
@@ -217,7 +216,8 @@ def play_game(m, n):
         think_ahead = min(max(m, n), 9)
         solution = minimax(current_state, think_ahead, 1, states_visited)
         clear()
-
+        
+        print(current_state)
         current_state = solution[1]
         print("AI thinks he can win: " + str(solution[0] == -1) + ".")
         print("AI thinks opponent can win: " + str(solution[0] == 1) + ".")
