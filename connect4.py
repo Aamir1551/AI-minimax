@@ -73,6 +73,8 @@ def game_over(state):
     return score == 1 or score == -1 or (len(player1_pos) + len(player2_pos) == m*n)
 
 def get_child_state(state, playerID):
+    if(game_over(state)):
+        return []
     if(not playerID in {0,1}):
         print("Unexpected error")
         raise
@@ -105,11 +107,13 @@ def get_child_state(state, playerID):
 def minimax(state, depth, playerID, states_visited):
     #player 0  tries to maximise value, while player 1 tries to minimise it
     #states visited is a hashmap from states to their minimax values
+
     if(state in states_visited):
         return states_visited[state]
 
     if(depth == 0 or game_over(state)):
-        return static_evaluation(state), state
+        states_visited[state] = [static_evaluation(state), state]
+        return states_visited[state]
     
     state_children = get_child_state(state, playerID)
     v, child_chosen = 0, []
@@ -154,6 +158,11 @@ def menu():
 
     clear()
     history = play_game(m, n)
+    print("View History: ")
+    if(input()):
+        for j,g in list(enumerate(history)):
+            print("Move " + str(j)) 
+            print_grid(g)
 
 def clear(): 
   
@@ -181,7 +190,7 @@ def play_game(m, n):
         col = input()
         (player1_pos, player2_pos, [m,n, current_heights], score) = current_state
 
-        while(not col.isnumeric() or  int(col) >m or int(col) <1 or  get_input_location(int(col) -1, current_heights) in frozenset.union(player1_pos, player2_pos) or current_heights[int(col) -1] < 0):
+        while(not col.isnumeric() or  int(col) >n or int(col) <1 or  get_input_location(int(col) -1, current_heights) in frozenset.union(player1_pos, player2_pos) or current_heights[int(col) -1] < 0):
             print("Sorry invalid input")
             print("Enter Move: ", end="")
             col = input()
@@ -191,11 +200,13 @@ def play_game(m, n):
         temp_heights = []
         for h_i in range(n):
             temp_heights.append(current_heights[h_i] - 1 if h_i == col else current_heights[h_i])
+        temp_heights = tuple(temp_heights)
 
         location =  get_input_location(col, current_heights)
-        current_state = (frozenset.union(player1_pos, frozenset({location})), player2_pos, (m,n,tuple(temp_heights)), score)
+        player1_pos = frozenset.union(player1_pos, location)
+        current_state = (player1_pos, player2_pos, (m,n,temp_heights), score)
         score = calculate_score(current_state, 0, location)
-        current_state = (frozenset.union(player1_pos, frozenset({location})), player2_pos, (m,n,tuple(temp_heights)), score)
+        current_state = (player1_pos, player2_pos, (m,n,temp_heights), score)
         history.append(current_state)
     
         clear()
@@ -203,16 +214,17 @@ def play_game(m, n):
         print("AI is thinking...")
         print()
         print_grid(current_state)
-        solution = minimax(current_state, m+n, 1, states_visited)
+        think_ahead = min(max(m, n), 9)
+        solution = minimax(current_state, think_ahead, 1, states_visited)
         clear()
 
         current_state = solution[1]
-        print("AI thinks he can win: " + str(solution[0] == 1) + ". AI is only looking " + str(m+n) + " moves ahead.")
+        print("AI thinks he can win: " + str(solution[0] == -1) + ".")
+        print("AI thinks opponent can win: " + str(solution[0] == 1) + ".")
+        print("AI is only looking " + str(think_ahead) + " moves ahead.")
         print()
         history.append(current_state)
         print_grid(current_state)
-
-
 
     print("Final grid")
     (player1_pos, player2_pos, (m,n, current_heights), score) = current_state
@@ -223,6 +235,7 @@ def play_game(m, n):
         print("AI wins, better luck next time")
     else:
         print("Draw")
+    return history
 
 menu()
 #exec(open('main.py').read())
