@@ -169,8 +169,8 @@ def menu():
 
     clear()
     history = play_game(m, n)
-    print("View History: ")
-    if(input()):
+    print("View History (y/n): ")
+    if(input() == "y"):
         for j,g in list(enumerate(history)):
             print("Move " + str(j)) 
             print_grid(g)
@@ -227,7 +227,6 @@ def play_game(m, n):
         solution = minimax(current_state, think_ahead, 1, states_visited, float('-inf'), float('inf'))
         clear()
         
-        print(current_state)
         current_state = solution[1]
         print("AI thinks he can win: " + str(solution[0] == -1) + ".")
         print("AI thinks opponent can win: " + str(solution[0] == 1) + ".")
