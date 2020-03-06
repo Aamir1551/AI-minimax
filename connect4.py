@@ -105,7 +105,7 @@ def get_child_state(state, playerID):
     
     return child_states
 
-def minimax(state, depth, playerID, states_visited):
+def minimax(state, depth, playerID, states_visited, alpha, beta):
     #player 0  tries to maximise value, while player 1 tries to minimise it
     #states visited is a      from states to their minimax values
 
@@ -123,18 +123,28 @@ def minimax(state, depth, playerID, states_visited):
     if playerID == 0:
         v = float('-inf')
         for child in state_children:
-            temp = minimax(child, depth -1, 1, states_visited)            
+            temp = minimax(child, depth -1, 1, states_visited, alpha, beta)            
             if(temp[0] > v):
                 child_chosen = child                
                 v = temp[0]
+            alpha = max(alpha, temp[0])
+            if(alpha >= beta):
+                states_visited[state] = [v, child_chosen]
+                return alpha, temp[1]
+
     
     if playerID == 1:
         v = float('inf')
         for child in state_children:
-            temp = minimax(child, depth -1, 0, states_visited)
+            temp = minimax(child, depth -1, 0, states_visited, alpha, beta)
             if(temp[0] < v):
                 child_chosen = child
                 v = temp[0]
+            beta = min(beta, temp[0])
+            if(alpha >= beta):
+                states_visited[state] = [v, child_chosen]
+                return beta, temp[1]
+
     states_visited[state] = [v, child_chosen]
     return v, child_chosen
     
@@ -213,8 +223,8 @@ def play_game(m, n):
         print("AI is thinking...")
         print()
         print_grid(current_state)
-        think_ahead = min(max(m, n), 9)
-        solution = minimax(current_state, think_ahead, 1, states_visited)
+        think_ahead = 15#min(max(m, n), 9)
+        solution = minimax(current_state, think_ahead, 1, states_visited, float('-inf'), float('inf'))
         clear()
         
         print(current_state)
